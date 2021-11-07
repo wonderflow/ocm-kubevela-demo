@@ -30,3 +30,24 @@ spec:
                 key: slack
             message:
               text: "Successfully apply the database in dev cluster."
+      - name: read-dev-secret
+        type: read-object
+        outputs:
+          - name: dev-secret-value
+            valueFrom: output.value.data
+        properties:
+          apiVersion: v1
+          kind: Secret
+          name: dev-db-conn
+      - name: apply-dev-secret
+        type: apply-object
+        inputs:
+          - from: dev-secret-value
+            parameterKey: value.data
+        properties:
+          value:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: dev-db-conn
+          cluster: vela-dev

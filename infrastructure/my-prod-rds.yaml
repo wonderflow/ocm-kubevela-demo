@@ -29,3 +29,24 @@ spec:
                 key: slack
             message:
               text: "Successfully apply the database in prod cluster."
+      - name: read-prod-secret
+        type: read-object
+        outputs:
+          - name: prod-secret-value
+            valueFrom: output.value.data
+        properties:
+          apiVersion: v1
+          kind: Secret
+          name: prod-db-conn
+      - name: apply-prod-secret
+        type: apply-object
+        inputs:
+          - from: prod-secret-value
+            parameterKey: value.data
+        properties:
+          value:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: dev-db-conn
+          cluster: vela-prod
