@@ -7,7 +7,7 @@ spec:
     - name: my-server
       type: webservice
       properties:
-        image: oamdev/ocm-vela-demo:master-3f0bd17d-1636251254 # {"$imagepolicy": "default:app-gitops"}
+        image: oamdev/ocm-vela-demo:master-8f4b636b-1636256689 # {"$imagepolicy": "default:app-gitops"}
         port: 9080
         env:
           - name: DB_HOST
@@ -72,10 +72,8 @@ spec:
                 key: slack
             message:
               text: "Successfully apply the app in dev cluster."
-
       - name: manual-approval
         type: suspend
-
       - name: deploy-prod
         type: deploy2env
         properties:
