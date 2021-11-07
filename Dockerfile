@@ -7,14 +7,14 @@ RUN go mod download
 
 COPY static/index.html ./static/index.html
 COPY app.go .
-RUN go build -o kubevela-nocalhost-demo-app app.go
+RUN go build -o kubevela-ocm-demo-app app.go
 
 FROM alpine:3.10
 WORKDIR /app
 COPY static/index.html ./static/index.html
-COPY --from=builder /app/kubevela-nocalhost-demo-app /app/kubevela-nocalhost-demo-app
+COPY --from=builder /app/kubevela-ocm-demo-app /app/kubevela-ocm-demo-app
 ENV DB_HOST="host"
 ENV DB_USER="user"
-ENTRYPOINT ./kubevela-nocalhost-demo-app
+ENTRYPOINT ./kubevela-ocm-demo-app
 
 EXPOSE 9080
