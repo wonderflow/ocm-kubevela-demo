@@ -8,7 +8,7 @@ spec:
     type: kustomize
     properties:
       repoType: git
-      url: https://github.com/FogDong/nocalhost-demo
+      url: https://github.com/wonderflow/ocm-kubevela-demo
       secretRef: git-secret
       pullInterval: 10m
       git:
