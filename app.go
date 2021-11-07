@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"text/template"
+	"time"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 			Host: os.Getenv("DB_HOST"),
 			User: os.Getenv("DB_USER"),
 		}
-
+		log.Printf("%s requested by %s\n",time.Now().Format(time.RFC3339),r.RemoteAddr)
 		err = tmpl.Execute(w, data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
