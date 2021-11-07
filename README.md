@@ -4,7 +4,9 @@ This is a demo for KubeCon China topic "Build and Manage Multi-Cluster Applicati
 
 This Readme for DevOps or Ops Team.
 
-## Step up system environment for GitOps
+## Prerequisite
+
+You need to step up system environment for GitOps
 
 ### Install Vela
 
@@ -25,4 +27,17 @@ helm install --create-namespace -n vela-system kubevela kubevela/vela-core --set
 vela addon enable fluxccd
 ```
 
-2. 
+
+## Watch Git Repo
+
+1. Watch infrastructure change
+
+```shell
+kubectl apply -f cluster/infra-gitops.yaml
+```
+
+2. Watch app repo change
+
+```shell
+kubectl apply -f cluster/app-gitops.yaml
+```

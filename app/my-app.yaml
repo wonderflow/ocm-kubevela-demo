@@ -21,15 +21,6 @@ spec:
                 name: dev-db-conn
                 key: DB_USER
       traits:
-        - type: nocalhost
-          properties:
-            port: 9080
-            gitUrl: https://github.com/FogDong/nocalhost-demo.git
-            image: go
-            sync:
-              type: sendReceive
-            debug:
-              remoteDebugPort: 9009
         - type: ingress
           properties:
             domain: dev.c76af67709f3d464d8389355256c2368a.cn-hangzhou.alicontainer.com

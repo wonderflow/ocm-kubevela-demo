@@ -13,4 +13,4 @@ spec:
       pullInterval: 10m
       git:
         branch: gitops
-      path: ./release/infrastructure
+      path: ./infrastructure
