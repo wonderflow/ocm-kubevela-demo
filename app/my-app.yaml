@@ -27,6 +27,11 @@ spec:
             http:
               /: 9080
   policies:
+    - name: health-policy-demo
+      type: health
+      properties:
+        probeInterval: 30
+        probeTimeout: 60
     - name: multi-env-policy
       type: env-binding
       properties:
