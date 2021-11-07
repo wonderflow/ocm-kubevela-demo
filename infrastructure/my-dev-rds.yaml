@@ -2,6 +2,8 @@ apiVersion: core.oam.dev/v1beta1
 kind: Application
 metadata:
   name: my-dev-rds
+  annotations:
+    db: dev-only
 spec:
   components:
     - name: dev-db

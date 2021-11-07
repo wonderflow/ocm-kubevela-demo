@@ -4,14 +4,14 @@ metadata:
   name: my-prod-rds
 spec:
   components:
-    - name: dev-db
+    - name: prod-db
       type: alibaba-rds
       properties:
-        instance_name: dev-db
-        account_name: dev
+        instance_name: prod-db
+        account_name: prod
         password: my-password
         writeConnectionSecretToRef:
-          name: dev-db-conn
+          name: prod-db-conn
 
   workflow:
     steps:
