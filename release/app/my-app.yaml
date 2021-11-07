@@ -7,7 +7,7 @@ spec:
     - name: my-server
       type: webservice
       properties:
-        image: oamdev/ocm-vela-demo:master-28917c57-1635860530 # {"$imagepolicy": "default:app-gitops"}
+        image: oamdev/ocm-vela-demo:master-e67940d2-1636250335 # {"$imagepolicy": "default:app-gitops"}
         port: 9080
         env:
           - name: DB_HOST
