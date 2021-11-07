@@ -2,7 +2,9 @@
 
 This is a demo for KubeCon China topic "Build and Manage Multi-Cluster Application With Consistent Experience".
 
-## Step up
+This Readme for DevOps or Ops Team.
+
+## Step up system environment for GitOps
 
 ### Install Vela
 
