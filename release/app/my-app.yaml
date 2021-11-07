@@ -7,7 +7,7 @@ spec:
     - name: my-server
       type: webservice
       properties:
-        image: ghcr.io/fogdong/nocalhost-demo:master-28917c57-1635860530 # {"$imagepolicy": "default:app-gitops"}
+        image: oamdev/ocm-vela-demo:master-28917c57-1635860530 # {"$imagepolicy": "default:app-gitops"}
         port: 9080
         env:
           - name: DB_HOST
@@ -32,7 +32,7 @@ spec:
               remoteDebugPort: 9009
         - type: ingress
           properties:
-            domain: dev.cc502b2b97a5c4f16a1d01f9217926e85.cn-hongkong.alicontainer.com
+            domain: dev.c76af67709f3d464d8389355256c2368a.cn-hangzhou.alicontainer.com
             http:
               /: 9080
   policies:
@@ -43,14 +43,14 @@ spec:
           - name: dev
             placement:
               clusterSelector:
-                name: cluster-dev
+                name: vela-dev
             selector:
               components:
                 - my-server
           - name: prod
             placement:
               clusterSelector:
-                name: cluster-prod
+                name: vela-prod
             patch:
               components:
                 - name: my-server
@@ -58,7 +58,7 @@ spec:
                   traits:
                     - type: ingress
                       properties:
-                        domain: prod.ca89a4a90fcd345029f1a89d36ecdc6f9.cn-hongkong.alicontainer.com
+                        domain: prod.c78a0f953105342f2a22ee3f4bb6835a7.cn-hangzhou.alicontainer.com
   workflow:
     steps:
       - name: read-dev-secret
@@ -81,7 +81,7 @@ spec:
             kind: Secret
             metadata:
               name: dev-db-conn
-          cluster: cluster-dev
+          cluster: vela-dev
       - name: deploy-dev
         type: deploy2env
         properties:
@@ -119,7 +119,7 @@ spec:
             kind: Secret
             metadata:
               name: dev-db-conn
-          cluster: cluster-prod
+          cluster: vela-prod
       - name: deploy-prod
         type: deploy2env
         properties:
