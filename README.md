@@ -55,6 +55,7 @@ Please [enable their addons](https://kubevela.io/docs/install#4-optional-enable-
 ### Install OCM
 
 // TODO: The following OCM installation not supported now, you should install your OCM envs manuelly.
+// Note: vela will install cluster-gateway by default
 
 1. vela addon enable ocm-cluster-manager
 
