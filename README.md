@@ -10,10 +10,38 @@ You need to step up system environment for GitOps
 
 ### Install Vela
 
+Overall, if you encounter any trouble following the instructions below, please 
+check our official site for troubleshooting:
+
+> https://kubevela.io/docs/install#2-install-kubevela
+
+
+#### Preparation
+
+Adding official kubevela helm charts to your local repository:
+
+```shell
+$ helm repo add kubevela https://charts.kubevela.net/core
+$ helm repo update
+$ helm search repo vela
+NAME                     	CHART VERSION	APP VERSION	DESCRIPTION                                       
+kubevela/vela-core       	1.1.9        	1.1.9      	A Helm chart for KubeVela core                    
+kubevela/vela-core-legacy	1.1.9        	1.1.9      	A Helm chart for legacy KubeVela Core Controlle...
+kubevela/vela-minimal    	1.1.9        	1.1.9      	A Helm chart for KubeVela minimal                 
+kubevela/vela-rollout    	1.1.9        	1.1.9      	A Helm chart for KubeVela rollout controller.     
+kubevela/oam-runtime     	1.1.9        	1.1.9      	A Helm chart for oam-runtime aligns with OAM sp...
+```
+
+#### Installation
+
 1. Install Vela
 
 ```shell
-helm install --create-namespace -n vela-system kubevela kubevela/vela-core --set multicluster.enabled=true  --wait
+$ helm install \
+    --create-namespace -n vela-system \
+    kubevela kubevela/vela-core \
+    --set multicluster.enabled=true  \
+    --wait
 ```
 
 // Note: The current image: oamdev/vela-core:110701
@@ -21,7 +49,11 @@ helm install --create-namespace -n vela-system kubevela kubevela/vela-core --set
 2. Install Vela CLI
 
 ```shell
-brew install kubevela
+$ brew install kubevela
+$ vela version
+Version: refs/tags/v1.1.9
+GitRevision: git-bce3e15
+GolangVersion: go1.16.10
 ```
 
 // Note: You should build from master branch for full functions in the demo.
@@ -29,17 +61,35 @@ brew install kubevela
 
 ### Enable Addons
 
+#### Install addons fluxcd (REQUIRED)
+
 1. fluxcd for gitops
 
 ```shell
-vela addon enable fluxcd
+$ vela addon enable fluxcd
 ```
+
+To checkout the fluxcd installation:
+
+```shell
+$ kubectl -n flux-system get pod
+```
+
+#### Install addons terraform (REQUIRED)
 
 2. Terraform for cloud resources
 
 ```shell
-vela addon enable terraform
+$ vela addon enable terraform
 ```
+
+To checkout the terraform installation:
+
+```shell
+$ kubectl -n terraform-system get pod
+```
+
+#### ??? (OPTIONAL)
 
 3. Enable Aliabba Cloud Provider
 
@@ -52,14 +102,23 @@ Check the region ID here: https://www.alibabacloud.com/help/doc-detail/72379.htm
 Our demo only use Alibaba Cloud Resources, Azure and AWS are also supported now.
 Please [enable their addons](https://kubevela.io/docs/install#4-optional-enable-addons).
 
-### Install OCM
 
-// TODO: The following OCM installation not supported now, you should install your OCM envs manuelly.
-// Note: vela will install cluster-gateway by default
+#### Install addons OCM (REQUIRED)
 
-1. vela addon enable ocm-cluster-manager
+1. Enabling OCM addons for setting up multi-cluster control plane:
 
-2. vela cluster join <your kubeconfig> --ocm
+```shell
+$ vela addon enable ocm-cluster-manager
+```
+
+2. Joining a managed cluster to the OCM control plane:
+
+```shell
+$ # the path to the multi-cluster control plane cluster.
+$ # i.e. where we installed ocm-cluster-manager addon.
+$ export KUBECONIG=...
+$ vela cluster join <your joining managed cluster's kubeconfig> --ocm
+```
 
 ## Prepare GitOps Watch Config
 
