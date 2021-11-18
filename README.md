@@ -32,7 +32,7 @@ brew install kubevela
 1. fluxcd for gitops
 
 ```shell
-vela addon enable fluxccd
+vela addon enable fluxcd
 ```
 
 2. Terraform for cloud resources
