@@ -137,17 +137,21 @@ ocm/managed-serviceaccount       	<...>       	1.0.0      	A Helm chart for Mana
 ##### Installing addons
 
 ```shell
-# cluster-proxy addon
-$ helm -n open-cluster-management-addon install ocm/cluster-proxy 
-$ helm -n open-cluster-management-addon install ocm/managed-serviceaccount
-$ helm -n open-cluster-management-addon install ocm/cluster-gateway 
+# install the addons
+$ helm -n open-cluster-management-addon install cluster-proxy ocm/cluster-proxy 
+$ helm -n open-cluster-management-addon install managed-serviceaccount ocm/managed-serviceaccount
+$ helm -n open-cluster-management-addon install cluster-gateway ocm/cluster-gateway-addon-manager
+# check addon installation
 $ kubectl get managedclusteraddon -n <cluster name> 
 NAMESPACE           NAME                    AVAILABLE   DEGRADED   PROGRESSING
 <cluster name>      cluster-proxy           True     
 <cluster name>      managed-serviceaccount  True     
-<cluster name>      cluster-gateway         True     
+<cluster name>      cluster-gateway         True  
+# check gateway api registration
+$ kubectl get clustergateway
+NAME                PROVIDER   TYPE                  ENDPOINT
+<cluster name>                 ServiceAccountToken   <none>
 ```
-
 
 
 ## Prepare GitOps Watch Config
