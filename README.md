@@ -120,6 +120,36 @@ $ export KUBECONIG=...
 $ vela cluster join <your joining managed cluster's kubeconfig> --ocm
 ```
 
+3. Install OCM addons:
+
+##### Adding OCM addon helm chart repo
+
+```shell
+$ helm repo add ocm https://open-cluster-management-helm-charts.oss-cn-beijing.aliyuncs.com/releases/
+$ helm repo update
+$ helm search repo ocm
+NAME                             	CHART VERSION	APP VERSION	DESCRIPTION                                   
+ocm/cluster-gateway-addon-manager	<...>        	1.0.0      	A Helm chart for Cluster-Gateway Addon-Manager
+ocm/cluster-proxy                	<...>       	1.0.0      	A Helm chart for Cluster-Proxy                
+ocm/managed-serviceaccount       	<...>       	1.0.0      	A Helm chart for Managed ServiceAccount Addon 
+```
+
+##### Installing addons
+
+```shell
+# cluster-proxy addon
+$ helm -n open-cluster-management-addon install ocm/cluster-proxy 
+$ helm -n open-cluster-management-addon install ocm/managed-serviceaccount
+$ helm -n open-cluster-management-addon install ocm/cluster-gateway 
+$ kubectl get managedclusteraddon -n <cluster name> 
+NAMESPACE           NAME                    AVAILABLE   DEGRADED   PROGRESSING
+<cluster name>      cluster-proxy           True     
+<cluster name>      managed-serviceaccount  True     
+<cluster name>      cluster-gateway         True     
+```
+
+
+
 ## Prepare GitOps Watch Config
 
 1. Watch infrastructure change
