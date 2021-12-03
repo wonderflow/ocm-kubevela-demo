@@ -54,7 +54,7 @@ $ vela version
 Version: refs/tags/v1.1.9
 GitRevision: git-bce3e15
 GolangVersion: go1.16.10
-###
+### 
 $ pre-built master vela binary on: https://open-cluster-management.oss-us-west-1.aliyuncs.com/vela-darwin
 ```
 
