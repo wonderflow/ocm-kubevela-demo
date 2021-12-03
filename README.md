@@ -117,7 +117,7 @@ $ vela addon enable ocm-cluster-manager
 $ # the path to the multi-cluster control plane cluster.
 $ # i.e. where we installed ocm-cluster-manager addon.
 $ export KUBECONIG=...
-$ vela cluster join <your joining managed cluster's kubeconfig> --ocm
+$ vela cluster join <path to your joining managed cluster's kubeconfig> --in-cluster-boostrap=false -t ocm
 ```
 
 3. Install OCM addons:
