@@ -125,7 +125,7 @@ $ vela cluster join <your joining managed cluster's kubeconfig> --ocm
 ##### Adding OCM addon helm chart repo
 
 ```shell
-$ helm repo add ocm https://open-cluster-management-helm-charts.oss-cn-beijing.aliyuncs.com/releases/
+$ helm repo add ocm https://open-cluster-management.oss-us-west-1.aliyuncs.com
 $ helm repo update
 $ helm search repo ocm
 NAME                             	CHART VERSION	APP VERSION	DESCRIPTION                                   
