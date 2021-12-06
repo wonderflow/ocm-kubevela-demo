@@ -49,4 +49,4 @@ spec:
             kind: Secret
             metadata:
               name: dev-db-conn
-          cluster: vela-prod
+          cluster: prod

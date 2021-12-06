@@ -39,14 +39,14 @@ spec:
           - name: dev
             placement:
               clusterSelector:
-                name: vela-dev
+                name: dev
             selector:
               components:
                 - my-server
           - name: prod
             placement:
               clusterSelector:
-                name: vela-prod
+                name: prod
             patch:
               components:
                 - name: my-server
