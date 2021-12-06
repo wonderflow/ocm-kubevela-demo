@@ -2,7 +2,7 @@
 
 This is a demo for KubeCon China topic "Build and Manage Multi-Cluster Application With Consistent Experience".
 
-This Readme for DevOps or Ops Team.
+This Readme for DevOps or Ops Team. Please refer to [master](https://github.com/wonderflow/ocm-kubevela-demo) Branch for the Developer facing Demo.
 
 ## Prerequisite
 
