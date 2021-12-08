@@ -150,20 +150,20 @@ cluster-manager-hub-work-webhook              3/3     3            3           3
 ```shell
 # the path to the multi-cluster control plane cluster.
 # i.e. where we installed ocm-cluster-manager addon.
-$ export KUBECONFIG=<path to the kubeconfig of your manage cluster>
+$ export KUBECONFIG=<path to the kubeconfig of your hub cluster>
 $ vela cluster join \
-     <path to the kubeconfig of your joining spoke cluster> \
+     <path to the kubeconfig of your joining managed cluster> \
      --in-cluster-boostrap=false \
      -t ocm \
      --name my-cluster
 Hub cluster all set, continue registration.
-Using the api endpoint from hub kubeconfig "https://<SpokeCluster IP>:6443" as registration entry.
+Using the api endpoint from hub kubeconfig "https://<ManagedCluster IP>:6443" as registration entry.
 Successfully prepared registration config.
 Registration operator successfully deployed.
 Registration agent successfully deployed.
 Successfully found corresponding CSR from the agent.
 Approving the CSR for cluster "my-cluster".
-Successfully add cluster my-cluster, endpoint: <SpokeCluster IP>.
+Successfully add cluster my-cluster, endpoint: <ManagedCluster IP>.
 
 $ vela cluster list
 CLUSTER         TYPE                            ENDPOINT
