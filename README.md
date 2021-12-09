@@ -105,7 +105,7 @@ kubevela-vela-core-85644b9fb4-qxzbb         1/1     Running   0          56m
 terraform-controller-5d979c897c-wzbf7       1/1     Running   0          48m
 ```
 
-#### ??? (OPTIONAL)
+#### Prepare Cloud Provider (OPTIONAL)
 
 3. Enable Aliabba Cloud Provider
 
