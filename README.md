@@ -1,22 +1,12 @@
 # OCM-KubeVela-Demo
 
-This is a demo for KubeCon China topic "Build and Manage Multi-Cluster Application With Consistent Experience".
+This is a simple version of demo for KubeCon China topic **"Build and Manage Multi-Cluster Application With Consistent Experience"**. 
 
-This Readme for DevOps or Ops Team. Please refer to [master](https://github.com/wonderflow/ocm-kubevela-demo) Branch for the Developer facing Demo.
+In this guide, you can setup a simple multi-cluster application with KubeVela and OCM. If you would like to re-implement the full demo (including advanced features such as GitOps and Cloud Resource), you can read [Advanced Doc](https://github.com/wonderflow/ocm-kubevela-demo/tree/advanced) for more details.
 
 ## Prerequisite
 
-You need to step up system environment for GitOps
-
-### Install Vela
-
-Overall, if you encounter any trouble following the instructions below, please 
-check our official site for troubleshooting:
-
-> https://kubevela.io/docs/install#2-install-kubevela
-
-
-#### Preparation
+### Preparation
 
 Adding official kubevela helm charts to your local repository:
 
@@ -37,9 +27,9 @@ kubevela/oam-runtime            1.2.0-nightly-build     1.2.0-nightly-build     
 kubevela/oam-runtime            1.2.0-beta.2            1.2.0-beta.2            A Helm chart for oam-runtime aligns with OAM sp...
 ```
 
-#### Installation
+### Installation
 
-1. Install Vela
+1. Install KubeVela on your control plane (kubernetes cluster).
 
 ```shell
 $ helm install \
@@ -50,76 +40,27 @@ $ helm install \
     --wait
 ```
 
-2. Install Vela CLI
-
-```shell
-$ brew install kubevela
-$ vela version
-Version: refs/tags/v1.2.0-beta.2
-...
-```
-
-### Enable Addons
-
-#### Install addons fluxcd (REQUIRED)
-
-1. fluxcd for gitops
-
-```shell
-$ vela addon enable fluxcd
-Successfully enable addon:fluxcd
-
-$ vela addon status fluxcd
-addon fluxcd status is enabled
-```
-
-To checkout the fluxcd installation:
-
-```shell
-$ kubectl -n flux-system get pod
-NAME                                     READY   STATUS    RESTARTS   AGE
-flux-source-controller-f578dcdcb-jz7gx   1/1     Running   0          35s
-helm-controller-6b4c6cf947-j2c78         1/1     Running   0          36s
-kustomize-controller-7d76499ff4-vp8wb    1/1     Running   0          34s
-```
-
-#### Install addons terraform (REQUIRED)
-
-2. Terraform for cloud resources
-
-```shell
-$ vela addon enable terraform
-Successfully enable addon:terraform
-
-$ vela addon status terraform
-addon terraform status is enabled
-```
-
-To checkout the terraform installation:
+2. Check the installation of the KubeVela operator.
 
 ```shell
 $ kubectl -n vela-system get pod
 NAME                                        READY   STATUS    RESTARTS   AGE
 kubevela-cluster-gateway-79d785cc89-rpcfk   1/1     Running   0          56m
 kubevela-vela-core-85644b9fb4-qxzbb         1/1     Running   0          56m
-terraform-controller-5d979c897c-wzbf7       1/1     Running   0          48m
 ```
 
-#### ??? (OPTIONAL)
-
-3. Enable Aliabba Cloud Provider
+3. Install Vela CLI on your computer.
 
 ```shell
-vela addon enable terraform-alibaba ALICLOUD_ACCESS_KEY=<xxx> ALICLOUD_SECRET_KEY=<yyy> ALICLOUD_REGION=<region>
+$ brew install kubevela
+
+$ vela version
+Version: refs/tags/v1.2.0-beta.2
 ```
 
-Check the region ID here: https://www.alibabacloud.com/help/doc-detail/72379.htm
+>  If you encounter any trouble following the instructions above, please check our [official site](https://kubevela.io/docs/install#2-install-kubevela) for troubleshooting.
 
-Our demo only use Alibaba Cloud Resources, Azure and AWS are also supported now.
-Please [enable their addons](https://kubevela.io/docs/install#4-optional-enable-addons).
-
-
-#### Install addons OCM (REQUIRED)
+#### Install OCM addons
 
 1. Enabling OCM addons for setting up multi-cluster control plane:
 
@@ -131,7 +72,8 @@ $ vela addon status ocm-cluster-manager
 addon ocm-cluster-manager status is enabled
 ```
 
-2. Checkout the OCM installation on multi-cluster control plane
+2. Check the OCM installation on multi-cluster control plane
+
 ```shell
 $ kubectl -n open-cluster-management get deployment
 NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
@@ -148,29 +90,26 @@ cluster-manager-hub-work-webhook              3/3     3            3           3
 3. Joining a managed cluster to the OCM control plane:
 
 ```shell
-# the path to the multi-cluster control plane cluster.
-# i.e. where we installed ocm-cluster-manager addon.
-$ export KUBECONFIG=<path to the kubeconfig of your manage cluster>
 $ vela cluster join \
-     <path to the kubeconfig of your joining spoke cluster> \
+     <path to the kubeconfig of your joining managed cluster> \
      --in-cluster-boostrap=false \
      -t ocm \
      --name my-cluster
 Hub cluster all set, continue registration.
-Using the api endpoint from hub kubeconfig "https://<SpokeCluster IP>:6443" as registration entry.
+Using the api endpoint from hub kubeconfig "https://<ManagedCluster IP>:6443" as registration entry.
 Successfully prepared registration config.
 Registration operator successfully deployed.
 Registration agent successfully deployed.
 Successfully found corresponding CSR from the agent.
 Approving the CSR for cluster "my-cluster".
-Successfully add cluster my-cluster, endpoint: <SpokeCluster IP>.
+Successfully add cluster my-cluster, endpoint: <ManagedCluster IP>.
 
 $ vela cluster list
 CLUSTER         TYPE                            ENDPOINT
 my-cluster      OCM ManagedServiceAccount       - 
 ```
 
-4. Install OCM addons:
+5. Install OCM addons
 
 ##### Adding OCM addon helm chart repo
 
@@ -206,46 +145,61 @@ $ kubectl get --raw="/apis/cluster.core.oam.dev/v1alpha1/clustergateways/<cluste
 > Note: you may find the AVAILABE of cluster-proxy is *Unknown*, which is also correct, since it does not rely on agent.
 
 
-## Prepare GitOps Watch Config
-
-1. Watch infrastructure change
+## Deploy your multi-cluster application
 
 ```shell
-kubectl apply -f cluster/infra-gitops.yaml
+$ cat <<EOF | kubectl apply -f -
+apiVersion: core.oam.dev/v1beta1
+kind: Application
+metadata:
+  name: example-app
+  namespace: default
+spec:
+  components:
+    - name: express-server
+      type: webservice
+      properties:
+        image: crccheck/hello-world
+        port: 8000
+      traits:
+        - type: scaler
+          properties:
+            replicas: 3
+        - type: expose
+          properties:
+            port: [8000]
+  policies:          
+  - name: multi-cluster
+    type: env-binding
+    properties:
+      envs:                                     
+      - name: my-cluster-deploy
+        placement:  
+          clusterSelector:
+            name: my-cluster
+EOF
 ```
 
-2. Watch app repo change
+2. Check application status
 
 ```shell
-kubectl apply -f cluster/app-gitops.yaml
+vela status example-app
 ```
 
-Then everthing should go well if your network is fine.
-
-
-## Vela Ops
-
-1. Overview and Check status:
+3. Check running logs
 
 ```shell
-vela ls
-vela status <app-name>
+vela logs example-app
 ```
 
-2. Check logs:
+4. Enter the pods:
 
 ```shell
-vela logs <app-name>
+vela exec example-app -i -t -- /bin/sh
 ```
 
-3. Enter the pods:
+5. Port forward your app:
 
 ```shell
-vela exec <app-name> -i -t -- /bin/sh
-```
-
-4. Port forward your app:
-
-```shell
-vela port-forward <app-name>
+vela port-forward example-app
 ```
