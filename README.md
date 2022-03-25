@@ -123,14 +123,14 @@ $ vela addon enable ocm-gateway-manager-addon
 # check addon installation
 $ kubectl get managedclusteraddon -n <cluster name> 
 NAMESPACE           NAME                    AVAILABLE   DEGRADED   PROGRESSING
-<cluster name>      cluster-proxy           True     
-<cluster name>      managed-serviceaccount  True     
-<cluster name>      cluster-gateway         True  
+my-cluster          cluster-proxy           True     
+my-cluster          managed-serviceaccount  True     
+my-cluster          cluster-gateway         True  
 # check gateway api registration
 $ kubectl get clustergateway
-NAME                PROVIDER   TYPE                  ENDPOINT
-<cluster name>                 ServiceAccountToken   <none>
-$ kubectl get --raw="/apis/cluster.core.oam.dev/v1alpha1/clustergateways/<cluster name>/proxy/healthz"
+NAME       PROVIDER   CREDENTIAL-TYPE       ENDPOINT-TYPE
+my-cluster              ServiceAccountToken   ClusterProxy
+$ kubectl get --raw="/apis/cluster.core.oam.dev/v1alpha1/clustergateways /<cluster name>/proxy/healthz"
 ```
 > Note: you may find the AVAILABE of cluster-proxy is *Unknown*, which is also correct, since it does not rely on agent.
 
@@ -153,7 +153,7 @@ spec:
     - type: topology
       name: my-clusters
       properties:
-        clusters: ["<cluster name>"]
+        clusters: ["my-cluster"]
     - type: override
       name: override-nginx-1-20
       properties:
