@@ -130,7 +130,7 @@ my-cluster          cluster-gateway         True
 $ kubectl get clustergateway
 NAME       PROVIDER   CREDENTIAL-TYPE       ENDPOINT-TYPE
 my-cluster              ServiceAccountToken   ClusterProxy
-$ kubectl get --raw="/apis/cluster.core.oam.dev/v1alpha1/clustergateways /<cluster name>/proxy/healthz"
+$ kubectl get --raw="/apis/cluster.core.oam.dev/v1alpha1/clustergateways/my-cluster/proxy/healthz"
 ```
 > Note: you may find the AVAILABE of cluster-proxy is *Unknown*, which is also correct, since it does not rely on agent.
 
