@@ -13,18 +13,9 @@ Adding official kubevela helm charts to your local repository:
 ```shell
 $ helm repo add kubevela https://charts.kubevela.net/core
 $ helm repo update
-$ helm search repo vela -l --version '>=1.2.0-beta.2'
+$ helm search repo vela -l --version '>=1.3.0'
 NAME                            CHART VERSION           APP VERSION             DESCRIPTION                                       
-kubevela/vela-core              1.2.0-nightly-build     1.2.0-nightly-build     A Helm chart for KubeVela core                    
-kubevela/vela-core              1.2.0-beta.2            1.2.0-beta.2            A Helm chart for KubeVela core                    
-kubevela/vela-core-legacy       1.2.0-nightly-build     1.2.0-nightly-build     A Helm chart for legacy KubeVela Core Controlle...
-kubevela/vela-core-legacy       1.2.0-beta.2            1.2.0-beta.2            A Helm chart for legacy KubeVela Core Controlle...
-kubevela/vela-minimal           1.2.0-nightly-build     1.2.0-nightly-build     A Helm chart for KubeVela minimal                 
-kubevela/vela-minimal           1.2.0-beta.2            1.2.0-beta.2            A Helm chart for KubeVela minimal                 
-kubevela/vela-rollout           1.2.0-nightly-build     1.2.0-nightly-build     A Helm chart for KubeVela rollout controller.     
-kubevela/vela-rollout           1.2.0-beta.2            1.2.0-beta.2            A Helm chart for KubeVela rollout controller.     
-kubevela/oam-runtime            1.2.0-nightly-build     1.2.0-nightly-build     A Helm chart for oam-runtime aligns with OAM sp...
-kubevela/oam-runtime            1.2.0-beta.2            1.2.0-beta.2            A Helm chart for oam-runtime aligns with OAM sp...
+...
 ```
 
 ### Installation
@@ -35,7 +26,7 @@ kubevela/oam-runtime            1.2.0-beta.2            1.2.0-beta.2            
 $ helm install \
     --create-namespace -n vela-system \
     kubevela kubevela/vela-core \
-    --version 1.2.0-beta.2 \
+    --version 1.3.0 \
     --set multicluster.enabled=true  \
     --wait
 ```
@@ -55,21 +46,21 @@ kubevela-vela-core-85644b9fb4-qxzbb         1/1     Running   0          56m
 $ brew install kubevela
 
 $ vela version
-Version: refs/tags/v1.2.0-beta.2
+Version: refs/tags/v1.3.0
 ```
 
 >  If you encounter any trouble following the instructions above, please check our [official site](https://kubevela.io/docs/install#2-install-kubevela) for troubleshooting.
 
-#### Install OCM addons
+#### Install OCM hub cluster control plane
 
 1. Enabling OCM addons for setting up multi-cluster control plane:
 
 ```shell
-$ vela addon enable ocm-cluster-manager
-Successfully enable addon:ocm-cluster-manager
+$ vela addon enable ocm-hub-control-plane 
+Successfully enable addon:ocm-hub-control-plane 
 
-$ vela addon status ocm-cluster-manager
-addon ocm-cluster-manager status is enabled
+$ vela addon status ocm-hub-control-plane 
+addon ocm-hub-control-plane status is enabled
 ```
 
 2. Check the OCM installation on multi-cluster control plane
@@ -114,22 +105,21 @@ my-cluster      OCM ManagedServiceAccount       -
 ##### Adding OCM addon helm chart repo
 
 ```shell
+$ 
 $ helm repo add ocm https://open-cluster-management.oss-us-west-1.aliyuncs.com
 $ helm repo update
 $ helm search repo ocm
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                                   
-ocm/cluster-gateway-addon-manager       1.1.7           1.0.0           A Helm chart for Cluster-Gateway Addon-Manager
-ocm/cluster-proxy                       0.0.12          1.0.0           A Helm chart for Cluster-Proxy                
-ocm/managed-serviceaccount              0.0.32          1.0.0           A Helm chart for Managed ServiceAccount Addon
+ocm/cluster-gateway-addon-manager       1.3.0           1.0.0           A Helm chart for Cluster-Gateway Addon-Manager
+ocm/cluster-proxy                       0.2.0           1.0.0           A Helm chart for Cluster-Proxy                
+ocm/managed-serviceaccount              0.2.0           1.0.0           A Helm chart for Managed ServiceAccount Addon
 ```
 
 ##### Installing addons
 
 ```shell
 # install the addons
-$ helm -n open-cluster-management-addon install cluster-proxy ocm/cluster-proxy --create-namespace
-$ helm -n open-cluster-management-addon install managed-serviceaccount ocm/managed-serviceaccount
-$ helm -n open-cluster-management-addon install cluster-gateway ocm/cluster-gateway-addon-manager
+$ vela addon enable ocm-gateway-manager-addon
 # check addon installation
 $ kubectl get managedclusteraddon -n <cluster name> 
 NAMESPACE           NAME                    AVAILABLE   DEGRADED   PROGRESSING
@@ -152,54 +142,78 @@ $ cat <<EOF | kubectl apply -f -
 apiVersion: core.oam.dev/v1beta1
 kind: Application
 metadata:
-  name: example-app
-  namespace: default
+  name: nginx
 spec:
   components:
-    - name: express-server
+    - name: nginx
       type: webservice
       properties:
-        image: crccheck/hello-world
-        port: 8000
-      traits:
-        - type: scaler
-          properties:
-            replicas: 3
-        - type: expose
-          properties:
-            port: [8000]
-  policies:          
-  - name: multi-cluster
-    type: env-binding
-    properties:
-      envs:                                     
-      - name: my-cluster-deploy
-        placement:  
-          clusterSelector:
-            name: my-cluster
+        image: nginx
+  policies:
+    - type: topology
+      name: my-clusters
+      properties:
+        clusters: ["<cluster name>"]
+    - type: override
+      name: override-nginx-1-20
+      properties:
+        components:
+          - name: nginx
+            properties:
+              image: nginx:1.20
+  workflow:
+    steps:
+      - name: deploy-my-clusters
+        type: deploy
+        properties:
+          policies: ["my-clusters"]
 EOF
 ```
 
 2. Check application status
 
 ```shell
-vela status example-app
+vela status nginx
+```
+Then you are supposed to see the following results:
+```
+About:
+  Name:      	nginx                        
+  Namespace: 	default                      
+  Created at:	2022-03-25 19:14:49 +0800 CST
+  Status:    	running                      
+Workflow:
+  mode: StepByStep
+  finished: true
+  Suspend: false
+  Terminated: false
+  Steps
+  - id:yh4a62we9r
+    name:deploy-beijing
+    type:deploy
+    phase:succeeded 
+    message:
+Services:
+  - Name: nginx  Env: Control plane cluster
+    Type: webservice
+    healthy Ready:1/1
+    Traits:
 ```
 
 3. Check running logs
 
 ```shell
-vela logs example-app
+vela logs nginx
 ```
 
 4. Enter the pods:
 
 ```shell
-vela exec example-app -i -t -- /bin/sh
+vela exec nginx -i -t -- /bin/sh
 ```
 
 5. Port forward your app:
 
 ```shell
-vela port-forward example-app
+vela port-forward nginx
 ```
